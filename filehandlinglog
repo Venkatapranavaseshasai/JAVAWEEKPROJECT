@@ -1,0 +1,59 @@
+import java.io.*;
+import java.util.*;
+
+public class LogAnalyzer {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // 🔹 Take file name from user
+        System.out.print("Enter log file path: ");
+        String filePath = sc.nextLine();
+
+        int infoCount = 0;
+        int errorCount = 0;
+        int warningCount = 0;
+
+        ArrayList<String> errorLogs = new ArrayList<>();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                if (line.contains("INFO")) {
+                    infoCount++;
+                } 
+                else if (line.contains("ERROR")) {
+                    errorCount++;
+                    errorLogs.add(line);
+                } 
+                else if (line.contains("WARNING")) {
+                    warningCount++;
+                }
+            }
+
+            br.close();
+
+            // Output
+            System.out.println("\n===== LOG ANALYSIS =====");
+            System.out.println("INFO Count: " + infoCount);
+            System.out.println("ERROR Count: " + errorCount);
+            System.out.println("WARNING Count: " + warningCount);
+
+            System.out.println("\n--- ERROR LOGS ---");
+            for (String err : errorLogs) {
+                System.out.println(err);
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! Please check the path.");
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+
+        sc.close();
+    }
+}
