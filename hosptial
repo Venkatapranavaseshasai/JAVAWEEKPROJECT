@@ -1,0 +1,112 @@
+import java.util.*;
+
+// Appointment class
+class Appointment {
+    String patientName;
+    String doctorName;
+    String date;
+
+    Appointment(String patientName, String doctorName, String date) {
+        this.patientName = patientName;
+        this.doctorName = doctorName;
+        this.date = date;
+    }
+}
+
+public class AppointmentSystem {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Appointment> list = new ArrayList<>();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== APPOINTMENT SYSTEM =====");
+            System.out.println("1. Book Appointment");
+            System.out.println("2. View Appointments");
+            System.out.println("3. Search Appointment");
+            System.out.println("4. Cancel Appointment");
+            System.out.println("5. Exit");
+
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter Patient Name: ");
+                    String pname = sc.next();
+
+                    System.out.print("Enter Doctor Name: ");
+                    String dname = sc.next();
+
+                    System.out.print("Enter Date (dd-mm-yyyy): ");
+                    String date = sc.next();
+
+                    list.add(new Appointment(pname, dname, date));
+                    System.out.println("Appointment Booked!");
+                    break;
+
+                case 2:
+                    if (list.isEmpty()) {
+                        System.out.println("No appointments found!");
+                    } else {
+                        System.out.println("\nAppointments:");
+                        for (Appointment a : list) {
+                            System.out.println(a.patientName + " | " + a.doctorName + " | " + a.date);
+                        }
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter patient name to search: ");
+                    String search = sc.next();
+
+                    boolean found = false;
+                    for (Appointment a : list) {
+                        if (a.patientName.equalsIgnoreCase(search)) {
+                            System.out.println("Found: " + a.patientName + " | " + a.doctorName + " | " + a.date);
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        System.out.println("No appointment found!");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter patient name to cancel: ");
+                    String cancel = sc.next();
+
+                    boolean removed = false;
+
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).patientName.equalsIgnoreCase(cancel)) {
+                            list.remove(i);
+                            removed = true;
+                            System.out.println("Appointment Cancelled!");
+                            break;
+                        }
+                    }
+
+                    if (!removed) {
+                        System.out.println("Appointment not found!");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("Thank you!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 5);
+
+        sc.close();
+    }
+}
