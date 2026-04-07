@@ -1,0 +1,77 @@
+import java.util.*;
+
+public class VotingSystem {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // HashMap to store candidate and votes
+        HashMap<String, Integer> votes = new HashMap<>();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== VOTING SYSTEM =====");
+            System.out.println("1. Vote");
+            System.out.println("2. View Results");
+            System.out.println("3. Find Winner");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter candidate name: ");
+                    String name = sc.next();
+
+                    // Add vote using HashMap
+                    votes.put(name, votes.getOrDefault(name, 0) + 1);
+
+                    System.out.println("Vote added!");
+                    break;
+
+                case 2:
+                    if (votes.isEmpty()) {
+                        System.out.println("No votes yet!");
+                    } else {
+                        System.out.println("\n--- Voting Results ---");
+                        for (Map.Entry<String, Integer> entry : votes.entrySet()) {
+                            System.out.println(entry.getKey() + " : " + entry.getValue());
+                        }
+                    }
+                    break;
+
+                case 3:
+                    if (votes.isEmpty()) {
+                        System.out.println("No votes to find winner!");
+                    } else {
+                        String winner = "";
+                        int maxVotes = 0;
+
+                        for (Map.Entry<String, Integer> entry : votes.entrySet()) {
+                            if (entry.getValue() > maxVotes) {
+                                maxVotes = entry.getValue();
+                                winner = entry.getKey();
+                            }
+                        }
+
+                        System.out.println("Winner: " + winner + " with " + maxVotes + " votes");
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Thank you!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 4);
+
+        sc.close();
+    }
+}
