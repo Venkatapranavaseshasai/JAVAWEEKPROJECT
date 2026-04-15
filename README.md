@@ -1,0 +1,153 @@
+LOAN Managemnet System
+
+
+import java.io.*;
+import java.util.*;
+
+ 
+class Loan {
+    int id;
+    String name;
+    double amount;
+    double interestRate;
+    int months;
+    double emi;
+    String status;
+    double remainingAmount;
+
+    Loan(int id, String name, double amount, double interestRate, int months) {
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+        this.interestRate = interestRate;
+        this.months = months;
+        this.emi = calculateEMI();
+        this.status = "Pending";
+        this.remainingAmount = amount;
+    }
+
+    double calculateEMI() {
+        double r = interestRate / (12 * 100); // monthly rate
+        return (amount * r * Math.pow(1 + r, months)) /
+               (Math.pow(1 + r, months) - 1);
+    }
+}
+
+public class LoanManagementSystem {
+
+    static ArrayList<Loan> loans = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+    static int idCounter = 1;
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\n--- Loan Management System ---");
+            System.out.println("1. Apply Loan");
+            System.out.println("2. Approve/Reject Loan");
+            System.out.println("3. View Loans");
+            System.out.println("4. Pay EMI");
+            System.out.println("5. Save to File");
+            System.out.println("0. Exit");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1: applyLoan(); break;
+                case 2: approveLoan(); break;
+                case 3: viewLoans(); break;
+                case 4: payEMI(); break;
+                case 5: saveToFile(); break;
+                case 0: System.out.println("Exiting..."); break;
+                default: System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 0);
+    }
+
+    static void applyLoan() {
+        sc.nextLine();
+        System.out.print("Enter Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Loan Amount: ");
+        double amount = sc.nextDouble();
+
+        System.out.print("Enter Interest Rate (%): ");
+        double rate = sc.nextDouble();
+
+        System.out.print("Enter Months: ");
+        int months = sc.nextInt();
+
+        Loan loan = new Loan(idCounter++, name, amount, rate, months);
+        loans.add(loan);
+
+        System.out.println("Loan Applied! EMI: " + loan.emi);
+    }
+
+    static void approveLoan() {
+        System.out.print("Enter Loan ID: ");
+        int id = sc.nextInt();
+
+        for (Loan l : loans) {
+            if (l.id == id) {
+                System.out.print("Approve (yes/no): ");
+                String decision = sc.next();
+                if (decision.equalsIgnoreCase("yes")) {
+                    l.status = "Approved";
+                } else {
+                    l.status = "Rejected";
+                }
+                System.out.println("Status Updated!");
+                return;
+            }
+        }
+        System.out.println("Loan not found!");
+    }
+
+    static void viewLoans() {
+        for (Loan l : loans) {
+            System.out.println("\nID: " + l.id);
+            System.out.println("Name: " + l.name);
+            System.out.println("Amount: " + l.amount);
+            System.out.println("EMI: " + l.emi);
+            System.out.println("Status: " + l.status);
+            System.out.println("Remaining: " + l.remainingAmount);
+        }
+    }
+
+    static void payEMI() {
+        System.out.print("Enter Loan ID: ");
+        int id = sc.nextInt();
+
+        for (Loan l : loans) {
+            if (l.id == id && l.status.equals("Approved")) {
+                if (l.remainingAmount <= 0) {
+                    System.out.println("Loan already paid!");
+                    return;
+                }
+
+                l.remainingAmount -= l.emi;
+                if (l.remainingAmount < 0) l.remainingAmount = 0;
+
+                System.out.println("Payment done. Remaining: " + l.remainingAmount);
+                return;
+            }
+        }
+        System.out.println("Loan not found or not approved!");
+    }
+
+    static void saveToFile() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("loans.txt"))) {
+            for (Loan l : loans) {
+                bw.write(l.id + "," + l.name + "," + l.amount + "," +
+                         l.emi + "," + l.status + "," + l.remainingAmount);
+                bw.newLine();
+            }
+            System.out.println("Saved to file!");
+        } catch (IOException e) {
+            System.out.println("File error!");
+        }
+    }
+}
