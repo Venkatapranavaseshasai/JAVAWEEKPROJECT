@@ -1,0 +1,131 @@
+import java.io.*;
+import java.time.*;
+import java.util.*;
+
+ 
+class Appointment {
+    int id;
+    String name;
+    LocalDate date;
+    LocalTime time;
+
+    Appointment(int id, String name, LocalDate date, LocalTime time) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+        this.time = time;
+    }
+}
+
+public class AppointmentSystem {
+
+    static ArrayList<Appointment> appointments = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+    static int idCounter = 1;
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\n--- Appointment Booking System ---");
+            System.out.println("1. Book Appointment");
+            System.out.println("2. Cancel Appointment");
+            System.out.println("3. Check Availability");
+            System.out.println("4. View Schedule");
+            System.out.println("5. Save to File");
+            System.out.println("0. Exit");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1: bookAppointment(); break;
+                case 2: cancelAppointment(); break;
+                case 3: checkAvailability(); break;
+                case 4: viewSchedule(); break;
+                case 5: saveToFile(); break;
+                case 0: System.out.println("Exiting..."); break;
+                default: System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 0);
+    }
+
+    static void bookAppointment() {
+        sc.nextLine();
+        System.out.print("Enter Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Date (YYYY-MM-DD): ");
+        LocalDate date = LocalDate.parse(sc.next());
+
+        System.out.print("Enter Time (HH:MM): ");
+        LocalTime time = LocalTime.parse(sc.next());
+
+        // Check conflict
+        for (Appointment a : appointments) {
+            if (a.date.equals(date) && a.time.equals(time)) {
+                System.out.println("Slot already booked!");
+                return;
+            }
+        }
+
+        Appointment ap = new Appointment(idCounter++, name, date, time);
+        appointments.add(ap);
+
+        System.out.println("Appointment booked! ID: " + ap.id);
+    }
+
+    static void cancelAppointment() {
+        System.out.print("Enter Appointment ID: ");
+        int id = sc.nextInt();
+
+        Iterator<Appointment> it = appointments.iterator();
+        while (it.hasNext()) {
+            Appointment a = it.next();
+            if (a.id == id) {
+                it.remove();
+                System.out.println("Appointment cancelled!");
+                return;
+            }
+        }
+        System.out.println("Appointment not found!");
+    }
+
+    static void checkAvailability() {
+        System.out.print("Enter Date (YYYY-MM-DD): ");
+        LocalDate date = LocalDate.parse(sc.next());
+
+        System.out.print("Enter Time (HH:MM): ");
+        LocalTime time = LocalTime.parse(sc.next());
+
+        for (Appointment a : appointments) {
+            if (a.date.equals(date) && a.time.equals(time)) {
+                System.out.println("Not Available");
+                return;
+            }
+        }
+        System.out.println("Available");
+    }
+
+    static void viewSchedule() {
+        System.out.println("\n--- All Appointments ---");
+        for (Appointment a : appointments) {
+            System.out.println("ID: " + a.id +
+                    " | Name: " + a.name +
+                    " | Date: " + a.date +
+                    " | Time: " + a.time);
+        }
+    }
+
+    static void saveToFile() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("appointments.txt"))) {
+            for (Appointment a : appointments) {
+                bw.write(a.id + "," + a.name + "," + a.date + "," + a.time);
+                bw.newLine();
+            }
+            System.out.println("Data saved!");
+        } catch (IOException e) {
+            System.out.println("File error!");
+        }
+    }
+}
