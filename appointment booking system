@@ -61,7 +61,7 @@ public class AppointmentSystem {
         System.out.print("Enter Time (HH:MM): ");
         LocalTime time = LocalTime.parse(sc.next());
 
-        // Check conflict
+         
         for (Appointment a : appointments) {
             if (a.date.equals(date) && a.time.equals(time)) {
                 System.out.println("Slot already booked!");
