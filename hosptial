@@ -1,6 +1,6 @@
 import java.util.*;
 
-// Appointment class
+ 
 class Appointment {
     String patientName;
     String doctorName;
